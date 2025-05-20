@@ -1,6 +1,9 @@
 package link
 
-import "fmt"
+import (
+    "fmt"
+    "github.com/2003Aditya/ComputerNetwork/network"
+)
 
 // "fmt"
 
@@ -9,6 +12,9 @@ import "fmt"
 func Frame(b byte) []byte  {
     startFlag := []byte{0,1,1,1,1,1,1,0}
     endFlag := []byte{0,1,1,1,1,1,1,0}
+    src := []byte{0,1}
+    des := []byte{1,0}
+    ttl := []byte{0,1,0,1}
 
     ones := 0
     var parity int
@@ -31,9 +37,10 @@ func Frame(b byte) []byte  {
     } else{
         parity = 1
     }
-    dataBits = append(dataBits, byte(parity))
+
+    packet := network.Packet(src, des, ttl, dataBits)
     framed := append([]byte{}, startFlag...)
-    framed = append(framed, dataBits...)
+    framed = append(framed, packet...)
     framed = append(framed, byte(parity))
     framed = append(framed, endFlag...)
     fmt.Printf("parity: %d\n", parity)
@@ -41,12 +48,21 @@ func Frame(b byte) []byte  {
     return framed
 }
 
+func count(frame []byte) int{
+    count := 0
+    for range frame {
+        count++
+    }
+    return count
+}
+
 
 // func main() {
 //
 //     b := "C"
 //     byteValue := b[0]
-//     bits := frame(byteValue)
+//     bits := Frame(byteValue)
+//     fmt.Printf("total no of bits: %d\n" ,count(bits))
 //     fmt.Printf("bits of that byte:%v ",bits)
 //     fmt.Println()
 // }

@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	message := "C"
+	message := "B"
 
 	file, err := os.OpenFile("wire.txt", os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
