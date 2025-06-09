@@ -17,3 +17,17 @@ func CheckParity(databits []byte, parity byte) bool{
     return (count + parityBit) % 2 == 0
 
 }
+
+// func EqualFlags(a , b []byte) bool {
+//     if len(a) != len(b) {
+//         return false
+//     }
+//     for i := range {
+//         if a[i] != b[i] {
+//             return false
+//         }
+//     }
+//
+//     return true
+//
+// }

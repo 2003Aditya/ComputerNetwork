@@ -3,6 +3,7 @@ package link
 import (
     "fmt"
     "github.com/2003Aditya/ComputerNetwork/network"
+    "github.com/2003Aditya/ComputerNetwork/transport"
 )
 
 // "fmt"
@@ -15,6 +16,11 @@ func Frame(b byte) []byte  {
     src := []byte{0,1}
     des := []byte{1,0}
     ttl := []byte{0,1,0,1}
+
+    SeqNum := []byte{0,0,0,0,0,0,0,1}
+
+    AckNum := []byte{0,0,0,0,0,0,1,0}
+
 
     ones := 0
     var parity int
@@ -38,7 +44,9 @@ func Frame(b byte) []byte  {
         parity = 1
     }
 
-    packet := network.Packet(src, des, ttl, dataBits)
+    TCPSegment := transport.Tcp(SeqNum, AckNum,dataBits , true, false, false)
+
+    packet := network.Packet(src, des, ttl, TCPSegment)
     framed := append([]byte{}, startFlag...)
     framed = append(framed, packet...)
     framed = append(framed, byte(parity))
@@ -48,14 +56,44 @@ func Frame(b byte) []byte  {
     return framed
 }
 
-func count(frame []byte) int{
+func Count(framed []byte) int{
     count := 0
-    for range frame {
+    for range framed {
         count++
     }
     return count
 }
 
+
+func FrameSegment(segment []byte) []byte {
+
+    startFlag := []byte{0,1,1,1,1,1,1,0}
+    endFlag := []byte{0,1,1,1,1,1,1,0}
+    src := []byte{0,1}
+    des := []byte{1,0}
+    ttl := []byte{0,1,0,1}
+
+    ones := 0
+    for _, bit := range segment {
+        if bit == 1 {
+            ones++
+        }
+    }
+
+    var parity byte = 0
+    if ones % 2 != 0 {
+        parity = 1
+
+    }
+
+    packet := network.Packet(src, des, ttl, segment)
+    framed := append([]byte{}, startFlag...)
+    framed = append(framed, packet...)
+    framed = append(framed, parity)
+    framed = append(framed, endFlag...)
+
+    return framed
+}
 
 // func main() {
 //
