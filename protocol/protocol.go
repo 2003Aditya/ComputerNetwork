@@ -12,7 +12,7 @@ import (
 func ParseFrame() {
 }
 
-func HandleSYN(src, des, ttl, seq, ack []byte) {
+func HandleSYN(ctx *PacketContext) {
 
 	msg := "d"
 	msgB := []byte(msg)
@@ -25,22 +25,22 @@ func HandleSYN(src, des, ttl, seq, ack []byte) {
 
 
 
-	fmt.Printf("Syn Received from %c to %c\n", src, des)
-	fmt.Printf("Initial sequence number %v\n", seq)
+	fmt.Printf("Syn Received from %c to %c\n", ctx.Src, ctx.Des)
+	fmt.Printf("Initial sequence number %v\n", ctx.Seq)
 
-	newTTL := utils.AsciiBytesToDigitBytes(ttl)
-	fmt.Printf("New TTL %v\n", newTTL)
+	ctx.NewTTL = utils.AsciiBytesToDigitBytes(ctx.TTL)
+	fmt.Printf("New TTL %v\n", ctx.NewTTL)
 
-	wuhuuSeq := utils.AsciiBytesToDigitBytes(seq)
+	wuhuuSeq := utils.AsciiBytesToDigitBytes(ctx.Seq)
 	fmt.Printf("wuhuuSeq: %v\n", wuhuuSeq)
 
-	newAck := utils.AsciiBytesToDigitBytes(ack)
+	newAck := utils.AsciiBytesToDigitBytes(ctx.Ack)
 	fmt.Printf("newAck %v\n", newAck)
 
-	newSrc := utils.AsciiBytesToDigitBytes(des)
+    newSrc := utils.AsciiBytesToDigitBytes(ctx.Des)
 	fmt.Printf("newSrc: %v\n", newSrc)
 
-	newDes := utils.AsciiBytesToDigitBytes(src)
+    newDes := utils.AsciiBytesToDigitBytes(ctx.Src)
 	fmt.Printf("newdes: %v\n", newDes)
 
 	newSeq := utils.Increment(wuhuuSeq)
@@ -50,12 +50,13 @@ func HandleSYN(src, des, ttl, seq, ack []byte) {
 	endFlag := []byte{0, 0, 0, 0, 0, 0, 0, 0}
 
 	fmt.Println("creating ACK-SYN Packet")
-	fmt.Printf("Source : %s, Destination: %s\n", src, des)
+	fmt.Printf("Source : %s, Destination: %s\n",ctx.Src, ctx.Des)
 
 	newTcpSegment := transport.Tcp(newSeq, newAck, newMsg, true, true, false)
 	fmt.Printf("newTcpSegment %v\n", newTcpSegment)
 
-	newPacket := network.Packet(newSrc, newDes, newTTL, newTcpSegment)
+	newPacket := network.Packet(newSrc, newDes,ctx.NewTTL, newTcpSegment)
+
 
 	var frame []byte
 
@@ -88,6 +89,38 @@ func HandleSYN(src, des, ttl, seq, ack []byte) {
 	}
 }
 
+func HandleSYNACK(ctx *PacketContext) {
+    StartFlag := ctx.StartFlag
+    EndFlag := ctx.EndFlag
+    newSrc := ctx.Des
+    newDes := ctx.Src
+    newTTL := ctx.TTL
+    newSeq := ctx.Seq
+    newAck := ctx.Ack
+
+    //msg formulation
+    msg := "b"
+    msgb := []byte(msg)
+
+    msgByte, parity := utils.MsgToByte(msgb)
+    newMsg := utils.AsciiBytesToDigitBytes(msgByte)
+    fmt.Printf("NewMsg %v\n", newMsg)
+    fmt.Printf("parity %v\n", parity)
+
+
+
+    // tcp segment creation
+    newTcpSegment := transport.Tcp(newSeq, newAck, newMsg,false, false, true )
+    fmt.Printf("NewTCPSegment: %v", newTcpSegment)
+
+    newPacket := network.Packet(newSrc, newDes, ctx.TTL, )
+
+
+    fmt.Printf("ctx.NewTTL: %c", newTTL)
+
+    fmt.Printf("Src1: %c, Des1: %c", newSrc, newDes)
+
+}
 
 func BuildPacket() {
 }

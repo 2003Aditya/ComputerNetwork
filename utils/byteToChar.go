@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+
 )
 
 func ByteToChar(databits []byte)byte {
@@ -118,6 +119,19 @@ func Increment(value []byte) []byte {
     fmt.Printf("from inside Incremented:%v\n", value)
 
     return value
+
+}
+
+// this function will delete the wire bits after using them in a 52 bit of representation
+func DeleteWire() {
+
+    file, err := os.OpenFile("wire.txt", os.O_TRUNC|os.O_CREATE| os.O_WRONLY, 0644)
+    if err != nil {
+        fmt.Println("Opening failed", err)
+        return
+    }
+    defer file.Close()
+
 
 }
 

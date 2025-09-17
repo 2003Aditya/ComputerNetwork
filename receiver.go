@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"time"
+	// "time"
 
 	"github.com/2003Aditya/ComputerNetwork/link"
 	"github.com/2003Aditya/ComputerNetwork/protocol"
@@ -27,6 +27,8 @@ const (
     FrameSize = StartFlagSize + PacketSize + ParitySize + EndFlagSize
     EndFlagSize = 8
 )
+
+
 
 func main() {
     file, err := os.Open("wire.txt")
@@ -134,15 +136,29 @@ func main() {
 
                 packetType := utils.GetPacketTypeSimple(flags)
                 fmt.Println("PAcket TYpe:", packetType)
+                ctx := &protocol.PacketContext {
+                    PacketType: utils.GetPacketTypeSimple(flags),
+                    StartFlag: startFlag,
+                    EndFlag: endFlag,
+                    Src: src,
+                    Des: des,
+                    TTL: ttl,
+                    Payload: payload,
+                    Seq: seq,
+                    Ack: ack,
+                    Flags: flags,
+                    // ParityBit: parityBit,
+                }
 
-                switch packetType {
+                switch ctx.PacketType {
                 case "SYN":
                     fmt.Println(seq)
                     fmt.Printf("seq: %c\n",seq)
-                    protocol.HandleSYN(src, des,ttl, seq, ack)
+                    protocol.HandleSYN(ctx)
                 case "SYN-ACK":
                     fmt.Println("Handling SYN-ACK Packet")
-
+                    fmt.Println("NewSrc23:", ctx.Src)
+                    protocol.HandleSYNACK(ctx)
                 case "ACK":
                     fmt.Println("Handling ACK Packet")
                 case "FIN":
@@ -176,7 +192,7 @@ func main() {
 
 
 
-        time.Sleep(1 * time.Second)
+        // time.Sleep(1 * time.Second)
     }
 
 }
