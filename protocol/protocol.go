@@ -90,8 +90,8 @@ func HandleSYN(ctx *PacketContext) {
 }
 
 func HandleSYNACK(ctx *PacketContext) {
-    StartFlag := ctx.StartFlag
-    EndFlag := ctx.EndFlag
+    // StartFlag := ctx.StartFlag
+    // EndFlag := ctx.EndFlag
     newSrc := ctx.Des
     newDes := ctx.Src
     newTTL := ctx.TTL
@@ -113,7 +113,8 @@ func HandleSYNACK(ctx *PacketContext) {
     newTcpSegment := transport.Tcp(newSeq, newAck, newMsg,false, false, true )
     fmt.Printf("NewTCPSegment: %v", newTcpSegment)
 
-    newPacket := network.Packet(newSrc, newDes, ctx.TTL, )
+    newPacket := network.Packet(newSrc, newDes, ctx.TTL, newTcpSegment)
+    fmt.Println(newPacket)
 
 
     fmt.Printf("ctx.NewTTL: %c", newTTL)
