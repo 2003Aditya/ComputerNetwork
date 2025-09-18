@@ -34,7 +34,7 @@ The sender program creates the wire.txt file and writes the simulated bitstream 
 
 ```bash
 
-go run sender/main.go
+go run sender.go
 ```
 Run the receiver:
 
@@ -42,7 +42,7 @@ The receiver program reads the bitstream from wire.txt, reconstructs the frames,
 
 ```bash
 
-go run receiver/main.go
+go run receiver.go
 ```
 You will see output in your terminal as the bits are "transmitted" and "received," along with the decoded packet information and parity check results.
 ```
